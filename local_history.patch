@@ -1,0 +1,70 @@
+Index: src/main/java/servlet/UserServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/servlet/UserServlet.java	(revision )
++++ src/main/java/servlet/UserServlet.java	(revision )
+@@ -1,4 +1,61 @@
+ package servlet;
+ 
+-public class UserServlet {
++import com.google.gson.Gson;
++import com.google.gson.JsonObject;
++import entity.User;
++import service.UserService;
++
++import javax.servlet.ServletException;
++import javax.servlet.annotation.WebServlet;
++import javax.servlet.http.HttpServlet;
++import javax.servlet.http.HttpServletRequest;
++import javax.servlet.http.HttpServletResponse;
++import java.io.BufferedReader;
++import java.io.IOException;
++import java.io.PrintWriter;
++import java.io.Reader;
++import java.net.Proxy;
++import java.util.List;
++
++@WebServlet("/user")
++public class UserServlet extends HttpServlet {
++    private UserService service = new UserService();
++
++    @Override
++    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
++        String u = req.getParameter("u");
++        Gson gson = new Gson();
++        PrintWriter writer = resp.getWriter();
++        resp.setContentType("application/json; charset=UTF-8");
++        String json = "";
++        if(u != null){
++            User user = service.findByUname(u);
++            json = gson.toJson(user);
++        }else {
++            List<User> users = service.find();
++            json = gson.toJson(users);
++        }
++        writer.print(json);
++        writer.flush();
++    }
++
++    @Override
++    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
++        StringBuffer sb = new StringBuffer();
++        String line = null;
++        BufferedReader reader = req.getReader();
++        while ((line = reader.readLine()) != null){
++            sb.append(line);
++        }
++        String json = sb.toString();
++        Gson gson = new Gson();
++        User user = gson.fromJson(json, User.class);
++        System.out.println(json);
++        User newUser = service.insert(user);
++        PrintWriter writer = resp.getWriter();
++        resp.setContentType("application/json; charset=UTF-8");
++        json = gson.toJson(newUser);
++        writer.print(json);
++        writer.flush();
++    }
+ }

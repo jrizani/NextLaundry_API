@@ -1,0 +1,9 @@
+servlet/UserServlet.class
+dao/BaseDao.class
+entity/BaseEntity.class
+service/BaseService.class
+service/UserService.class
+common/DbConnection.class
+entity/User.class
+dao/UserDao.class
+dao/impl/UserDaoImpl.class
